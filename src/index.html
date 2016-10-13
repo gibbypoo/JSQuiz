@@ -26,21 +26,33 @@
             </div>
             <div class="questionRadios">
                 <form class="radioList">
-                    <!--<input type="radio">Yo mama<br>
-                    <input type="radio">WUT<br>-->
                 </form>
             </div>
             <div class="buttons">
-                <button class="next">Next</button>
+                <button class="back">< Back</button>
+                <button class="next">Next ></button>
             </div>
         </div>
 
         <script src="http://ajax.googleapis.com/ajax/libs/jquery/1/jquery.min.js"></script>
-        <script>window.jQuery || document.write('<script src="js/vendor/jquery-{{JQUERY_VERSION}}.min.js"><\/script>')</script>
+        <!--<script>window.jQuery || document.write('<script src="js/vendor/jquery-{{JQUERY_VERSION}}.min.js"><\/script>')</script>-->
         <script src="js/plugins.js"></script>
         <script src="js/main.js"></script>
 
         <script>
+
+            /*
+            TODO:
+             X Add client-side data validation: make sure the user answers each question before proceeding to the next question.
+             — Add a “Back” button to allow the user to go back and change her answer. The user can go back up to the first question.
+                For the questions that the user has answered already, be sure to show the radio button selected,
+                so that the user is not forced to answer the questions again, which she has completed.
+             — Use jQuery to add animation (fade out the current question and fade in the next question).
+             — Test the quiz on IE 8 and 9, and fix any bugs. This will give you a good workout 😉
+             — Store the quiz questions in an external JSON file.
+             — Add user authentication: allow users log in, and save their login credentials to local storage (HTML5 browser storage).
+             — Use cookies to remember the user, and show a “Welcome, First Name” message when the user returns to the quiz.
+             */
             $(document).ready(function(){
                 // Only one question is in this array, but you will add all the questions.
                 var allQuestions = [
@@ -67,13 +79,14 @@
                         $('.next').hide();
                     }
                     while(questionNumber < allQuestions.length && nextQuestion == true){
-                        var question = allQuestions[questionNumber].question;
-                        el.append(question);
+                        //var question = allQuestions[questionNumber].question;
+                        el.append(allQuestions[questionNumber].question);
+                        $('.questionText').hide().html(el).fadeIn();
                         questionNumber++;
                         nextQuestion = false;
 
                     }
-                }
+                };
 
                 //radioList function used to populate radio button list
                 var radioList = function(questionNumber){
@@ -85,30 +98,35 @@
                             text + '</input><br />'));
 
                     }
-                }
+                };
 
 
-                //jQuery button event that fires off our functions
-                $('.buttons').on('click', 'button', function(e){
-                    e.preventDefault();
-                    var checkedAnswer = $('.radioList input:radio:checked').val();
-                    if(allQuestions[questionNumber].correctAnswer == checkedAnswer){
-                        totalCorrect++;
+                //jQuery button event that fires off our functions when selecting NEXT
+                $('.next').on('click', function(e){
+                    if ($("input[type=radio]:checked").length <= 0) {
+                        // No selections
+                        alert("You must choose an answer!");
                     }
-                    nextQuestion = true;
-                    questionNumber++;
-                    loadQuestion(questionNumber);
-                    radioList(questionNumber);
+                    else{
+                        e.preventDefault();
+                        var checkedAnswer = $('.radioList input:radio:checked').val();
+                        if(allQuestions[questionNumber].correctAnswer == checkedAnswer){
+                            totalCorrect++;
+                        }
+                        nextQuestion = true;
+                        questionNumber++;
+                        loadQuestion(questionNumber);
+                        radioList(questionNumber);
+                    }
+
+                });
+
+                $('.back').on('click', function(){
+                    alert('You clicked back!');
                 });
 
                 loadQuestion(questionNumber);
                 radioList(questionNumber);
-                /*for(var i = 0; i<allQuestions.length; i++){
-                 var question = allQuestions[i].question;
-                 console.log(question);
-                 $('.question').find('p').empty().append(question);
-
-                 }*/
 
             })
 
